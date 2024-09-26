@@ -10,7 +10,7 @@ export default new sqlite3.Database(dbName,(err)=>{
         console.log("connected to database")
         db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",(res)=>{
             console.log(res,'ll')
-            db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT);',(err)=>{
+            db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance INTEGER DEFAULT 0 );',(err)=>{
                 if(err){
                     console.error(err.message)
                 }else{
@@ -37,9 +37,9 @@ export const createCustomer=(firstname,lastname,username,password,email,callback
     db.run(sql,[firstname,lastname,username,password,email],callback)
 }
 
-export const updateCustomer=(id,username,firstname,lastname,email,callback)=>{
-    const sql="UPDATE CUSTOMER SET firstname=?,lastname=?,username=?,email=? WHERE id= ?"
-    db.run(sql,[firstname,lastname,username,email,id],callback)
+export const updateCustomer=(id,username,firstname,lastname,email,account_balance,callback)=>{
+    const sql="UPDATE CUSTOMER SET firstname=?,lastname=?,username=?,email=?,account_balance=? WHERE id= ?"
+    db.run(sql,[firstname,lastname,username,email,account_balance,id],callback)
 }
 
 export const deleteUser=(id,callback)=>{    

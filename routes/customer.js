@@ -1,31 +1,26 @@
 import { Router } from "express"
 import {readAllCustomer,createCustomer,readCustomer,updateCustomer,deleteUser} from "../database.js"
 import bodyParser from "body-parser"
-import { fail } from "assert"
 const router=Router()
+
+// create application/json parser
 var jsonParser = bodyParser.json()
 
 router.get('/',(req,res)=>{
     readAllCustomer((err, rows) => {
         if (!err) {
-            // res.status(200).json(rows)
-            // console.log(rows)
+         
         } else {
             console.error(err.message);
         }
-        // data = rows;
         res.status(200).json(rows)    
-        // res.render("index",{testimonials:data})
     })
 })
 
 
-// router.get('/new',(req,res)=>{
-//     res.render("users/form",{firstName:"Test"})
-// })
+
 
 router.route("/:id").get((req,res)=>{
-    // if(req.isValid){
     console.log(req.params.id)
     readCustomer(req.params.id,(err, rows) => {
         let data=rows[0]        
@@ -39,12 +34,9 @@ router.route("/:id").get((req,res)=>{
         }
         
     })
-    // }else{
-    //     res.send("user does not exist")
-    // }
+  
 }).post(jsonParser,(req,res)=>{
-    // users[req.params.id].name=req.body.firstName   
-    let {firstname,lastname,username,email}=req.body
+    let {firstname,lastname,username,email,account_balance}=req.body
     console.log(req.params.id)  
     readCustomer(req.params.id,(err, rows) => {
         let data=rows[0]
@@ -66,7 +58,10 @@ router.route("/:id").get((req,res)=>{
                 if(email==undefined){
                     email=data.email
                 }
-                updateCustomer(req.params.id,username,firstname,lastname,email,(err)=>{
+                if(account_balance==undefined){
+                    account_balance=data.account_balance
+                }
+                updateCustomer(req.params.id,username,firstname,lastname,email,account_balance,(err)=>{
                     if(err){
                         console.error(err.message)
                     }else{
@@ -74,7 +69,8 @@ router.route("/:id").get((req,res)=>{
                             firstname,
                             lastname,
                             username,
-                            email
+                            email,
+                            account_balance
                         }
                         res.json({
                             message:"updated successfully",
@@ -84,7 +80,6 @@ router.route("/:id").get((req,res)=>{
                 })
     }
     })
-    // res.render("users/form",{userName:users[req.params.id].name,firstName:users[req.params.id].name,userId:req.params.id})
 }).delete((req,res)=>{
     deleteUser(req.params.id,(err) => {
         if (err) {
@@ -130,21 +125,6 @@ router.post("/",jsonParser,(req,res)=>{
 
 })
 
-// router.param("id",(req,res,next,id)=>{
-//     req.User=-1
-//     req.isValid=false
-//     // if(id<=(users.length-1)){
-//     //     req.isValid=true        
-//     //     req.User=users[id]
-//     //     console.log(req.method)
-//     //     // if(req.method=='POST'){
-//     //     //     req.method='PUT'
-//     //     //     console.log("change to put")
-//     //     // }
-
-//     // }    
-//     next() 
-// })
 
 
 export default router
