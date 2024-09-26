@@ -1,5 +1,4 @@
 import express, { urlencoded} from "express"
-import {readAllCustomer,createCustomer} from "./database.js"
 const app = express();
  
  
