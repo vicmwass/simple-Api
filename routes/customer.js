@@ -64,6 +64,9 @@ router.route("/:id").get((req,res)=>{
                 updateCustomer(req.params.id,username,firstname,lastname,email,account_balance,(err)=>{
                     if(err){
                         console.error(err.message)
+                        res.status(500).json({
+                            message:"failed to update customer"
+                        })
                     }else{
                         data={
                             firstname,
