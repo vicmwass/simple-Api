@@ -1,20 +1,20 @@
 import sqlite3 from 'sqlite3';
+import {defLogger as logger} from './logger.js' 
 
 const db = new sqlite3.Database('mydatabase.db');
 
 const dbName='mydatabase.db'
 export default new sqlite3.Database(dbName,(err)=>{
     if(err){
-        console.error(err.message)
+        logger.error(err.message)
     }else{
-        console.log("connected to database")
-        db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",(res)=>{
-            console.log(res,'ll')
+        logger.info("connected to database")
+        db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",(res)=>{            
             db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance INTEGER DEFAULT 0 );',(err)=>{
                 if(err){
-                    console.error(err.message)
+                    logger.info(err.message)
                 }else{
-                    console.log("table created or existed")
+                    logger.info("table created or existed")
                 }
             })
         })

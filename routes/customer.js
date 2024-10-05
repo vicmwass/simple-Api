@@ -1,17 +1,16 @@
 import { Router } from "express"
+import {defLogger as logger} from '../logger.js' 
 import {readAllCustomer,createCustomer,readCustomer,updateCustomer,deleteUser} from "../database.js"
 import bodyParser from "body-parser"
 const router=Router()
-
 // create application/json parser
 var jsonParser = bodyParser.json()
 
 router.get('/',(req,res)=>{
     readAllCustomer((err, rows) => {
-        if (!err) {
-         
+        if (!err) {         
         } else {
-            console.error(err.message);
+            logger.error(err.message);
         }
         res.status(200).json(rows)    
     })
@@ -21,13 +20,17 @@ router.get('/',(req,res)=>{
 
 
 router.route("/:id").get((req,res)=>{
-    console.log(req.params.id)
     readCustomer(req.params.id,(err, rows) => {
         let data=rows[0]        
-        if (err||data==undefined) {
-            console.log("fail to get customer");
+        if (data==undefined) {
+            logger.error("customer does not exist");
+            res.status(400).json({
+                message:"customer does not exist"
+            })
+        }else if(err){
+            logger.error("database failure");
             res.status(500).json({
-                message:"failed to get customer"
+                message:"database failure"
             })
         }else{
             res.status(200).json(rows[0])    
@@ -37,13 +40,17 @@ router.route("/:id").get((req,res)=>{
   
 }).post(jsonParser,(req,res)=>{
     let {firstname,lastname,username,email,account_balance}=req.body
-    console.log(req.params.id)  
     readCustomer(req.params.id,(err, rows) => {
         let data=rows[0]
-        if (err||data==undefined) {
-            console.log("fail to get customer");
+        if (data==undefined) {
+            logger.error("customer does not exist");
+            res.status(400).json({
+                message:"customer does not exist"
+            })
+        }else if(err){
+            logger.error("database failure");
             res.status(500).json({
-                message:"failed to get customer"
+                message:"database failure"
             })
         }else{
                 if(firstname==undefined){
@@ -63,7 +70,7 @@ router.route("/:id").get((req,res)=>{
                 }
                 updateCustomer(req.params.id,username,firstname,lastname,email,account_balance,(err)=>{
                     if(err){
-                        console.error(err.message)
+                        logger.error(err.message)
                         res.status(500).json({
                             message:"failed to update customer"
                         })
@@ -84,27 +91,41 @@ router.route("/:id").get((req,res)=>{
     }
     })
 }).delete((req,res)=>{
-    deleteUser(req.params.id,(err) => {
-        if (err) {
-            console.error(err.message);
+    readCustomer(req.params.id,(err, rows) => {
+        let data=rows[0]
+        if (data==undefined) {
+            logger.error("customer does not exist");
+            res.status(400).json({
+                message:"customer does not exist"
+            })
+        }else if(err){
+            logger.error("database failure");
             res.status(500).json({
-                message:"error while deleting"
-            }) 
+                message:"database failure"
+            })
         }else{
-        res.status(200).json({
-            message:"deleted successfully"
-        })   
-     }
+            deleteUser(req.params.id,(err) => {
+                if (err) {
+                    logger.error(err.message);
+                    res.status(500).json({
+                        message:"error while deleting"
+                    }) 
+                }else{
+                res.status(200).json({
+                    message:"deleted successfully"
+                })   
+             }
+            })
+        }
     })
+    
 })
 
 router.post("/",jsonParser,(req,res)=>{
-    const isValid=true
-    if(isValid){
         const {firstname,lastname,username,password,email}=req.body
             createCustomer(firstname,lastname,username,password,email,(err)=>{
                 if(err){
-                    console.error(err.message)
+                    logger.error(err.message)
                 }else{
                     let data={
                         firstname,
@@ -112,19 +133,12 @@ router.post("/",jsonParser,(req,res)=>{
                         username,
                         email
                     }
-                    res.json({
+                    res.status(201).json({
                         message:"added successfully",
                         customer:data
                     })
                 }
             })
-    
-    }else{
-        console.log("Error")
-        res.status(400).json({
-            message:"failed to add customer",
-        })
-    }
 
 })
 

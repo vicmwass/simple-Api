@@ -12,6 +12,9 @@
   "dependencies": {
     "body-parser": "^1.20.3",
     "express": "^4.21.0",
+    "morgan": "^1.10.0",
+    "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   }
