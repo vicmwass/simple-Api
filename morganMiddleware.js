@@ -1,5 +1,7 @@
-import morgan from 'morgan'
-import {infoLogger as logger,defLogger as logger2} from './logger.js'
+const morgan =require('morgan')
+const {infoLogger ,defLogger} =require('./logger.js')
+const logger=infoLogger
+const logger2=defLogger
 
 const morganFormat = `
 {    "method": ":method",    "url": ":url",    "status": ":status",    "response-time": ":response-time",    "ip_addr": ":remote-addr"}`
@@ -17,4 +19,4 @@ const morganMiddleware = morgan(
   }
 )
 
-export default morganMiddleware
+module.exports=morganMiddleware

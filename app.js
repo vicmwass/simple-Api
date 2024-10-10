@@ -1,12 +1,13 @@
-import express, { urlencoded} from "express"
-import morganMiddleware from './morganMiddleware.js'
-import {defLogger as logger} from './logger.js' 
+const express=require("express")
+const morganMiddleware =require('./morganMiddleware.js')
+const urlencoded=express.urlencoded
+
 const app = express();
 
 app.use(morganMiddleware)
 app.use(urlencoded({extended:true}))
 
-import customerRoutes from "./routes/customer.js"
+const customerRoutes =require("./routes/customer.js")
 
 app.use("/customers",customerRoutes)
 
@@ -15,8 +16,5 @@ app.use("/customers",customerRoutes)
 //     console.log(req.originalUrl)
 //     next()
 // }
-const PORT = process.env.PORT || 3000
 
-app.listen(PORT,() => {
-    logger.info('Server started listening at port '+PORT)
-  })
+module.exports= app
