@@ -1,24 +1,24 @@
 const sqlite3 =require('sqlite3')
 const {defLogger} =require('./logger.js')
 
-const logger=defLogger
+// const logger=defLogger
 
-const db = new sqlite3.Database('mydatabase.db');
+const db = new sqlite3.Database('mydatabase.db',()=>{});
 
 const dbName='mydatabase.db'
 
 new sqlite3.Database(dbName,(err)=>{
     if(err){
-        logger.error(err.message)
+        defLogger.error(err.message)
     }else{
-        logger.info("database Ok")
-        db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",(err,row)=>{            
+        defLogger.info("database Ok")
+        db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",[],(err,row)=>{            
             if(row==undefined){
-                db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance INTEGER DEFAULT 0 );',(err)=>{
+                db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance INTEGER DEFAULT 0 );',[],(err)=>{
                 if(err){
-                    logger.info(err.message)
+                    defLogger.info(err.message)
                 }else{
-                    logger.info("CUSTOMER table created")
+                    defLogger.info("CUSTOMER table created")
                 }
             })}
         })
