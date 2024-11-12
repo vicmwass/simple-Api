@@ -89,7 +89,7 @@ const updateCustomer=(id,username,firstname,lastname,email,account_balance)=>{
     
 }
 
-const deleteUser=(id)=>{    
+const deleteCustomer=(id)=>{    
     const sql="DELETE FROM CUSTOMER WHERE id= ?"
     return new Promise((resolve, reject) => {
         db.run(sql,[id],(err)=>{
@@ -105,7 +105,7 @@ const deleteUser=(id)=>{
 
 
 module.exports={
-    deleteUser,
+    deleteCustomer,
     updateCustomer,
     createCustomer,
     readAllCustomer,

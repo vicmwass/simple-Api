@@ -1,6 +1,6 @@
 const  { Router } =require("express")
 const {defLogger } =require('../logger.js' )
-const {readAllCustomer,createCustomer,readCustomer,updateCustomer,deleteUser} =require("../database.js")
+const {readAllCustomer,createCustomer,readCustomer,updateCustomer,deleteCustomer} =require("../database.js")
 const bodyParser= require("body-parser")
 const router=Router()
 
@@ -35,7 +35,7 @@ router.route("/:id").get((req,res)=>{
             })
     })       
   
-}).post(jsonParser,(req,res)=>{
+}).put(jsonParser,(req,res)=>{
     let {firstname,lastname,username,email,account_balance}=req.body
     readCustomer(req.params.id).then((result)=>{
         if (result==undefined) {
@@ -93,7 +93,7 @@ router.route("/:id").get((req,res)=>{
                 message:"customer does not exist"
             })
         }else{
-            deleteUser(req.params.id).then(()=>{
+            deleteCustomer(req.params.id).then(()=>{
                 res.status(200).json({
                     message:"deleted successfully"
                 })   

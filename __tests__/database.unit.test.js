@@ -17,7 +17,7 @@ const sampleUsers=[{
 
 jest.mock('../logger',()=>{    
     const log=jest.fn().mockImplementation((message)=>{
-        console.log(message)
+        console.log("log message ",message)
     })
     const logger= {
         error:log,
@@ -33,6 +33,7 @@ const sqlite3 =require('sqlite3')
 jest.mock('sqlite3', () => {
     const mockRun = jest.fn().mockImplementation((sql, params, callback) => { 
         //order of update params is firstname,lastname,username,email,account_balance,index
+        //order of create params firstname,lastname,username,password,email
         if (sql.includes('UPDATE CUSTOMER')) {
             sampleUsers[params[5]]={...sampleUsers[params[5]],
                 firstname:params[0],
@@ -41,7 +42,21 @@ jest.mock('sqlite3', () => {
                 lastname:params[1],
                 account_balance:params[4]}
             callback(null,sampleUsers[params[5]])
-        }  else   callback(null,{})
+        } else if (sql.includes('DELETE FROM CUSTOMER')) {
+            sampleUsers.splice(params[0],1)
+        }  else if (sql.includes('INSERT INTO CUSTOMER')) {
+            const data ={
+                firstname:params[0],
+                email:params[4],
+                password:params[3],
+                username:params[2],
+                lastname:params[1],
+                account_balance:0
+            }
+            sampleUsers.push(data)
+            callback(null,data)
+
+        } else   callback(null,{})
         console.log("running mock",sql)
     })   
     const mockAll = jest.fn().mockImplementation((sql, params, callback) => {        
@@ -87,6 +102,7 @@ describe('Database credibility', () => {
                 require('../database')
                 resolve()
             },1000)})
+            
     })
 })
 
@@ -99,24 +115,18 @@ describe('customer database crud operations', () => {
             expect(row).toEqual(sampleUsers[index])
         })
     })  
+
     it('read multiple customer',async() => {
         db.readAllCustomer().then((row)=>{
             expect(row).toEqual(sampleUsers)
         })
     })  
 
-    it('add customer',async() => {
-        db.createCustomer().then((row)=>{
-            expect(row).toEqual(undefined)
-        })
-    })
-
     it('update customer',async() => {
         const index=0
         const original=sampleUsers[index]
         const updated={
             firstname:"vic3",
-            password:"kami",
             email:"vic1mwas2018@gmail.com",
             username:"vicmwass3",
             lastname:"mwass",
@@ -128,10 +138,30 @@ describe('customer database crud operations', () => {
             expect(row).not.toEqual(original)
         })
     })
+    
+    it('add customer',async() => {
+        const originalLength=sampleUsers.length
+        const created={
+            firstname:"vic5",
+            password:"kami",
+            email:"vic1mwas2018@gmail.com",
+            username:"vicmwass5",
+            lastname:"mwass",
+            }
+        const {username,firstname,lastname,email,password}=created
+        db.createCustomer(firstname,lastname,username,password,email).then((row)=>{
+            expect(row).toEqual(undefined)
+            expect(originalLength+1).toEqual(sampleUsers.length)
+        })
+    })
 
     it('delete customer',async() => {
-        db.deleteUser().then((row)=>{
+        const originalLength=sampleUsers.length
+        const index =sampleUsers.length/2
+        console.log(sampleUsers)
+        db.deleteCustomer(index).then((row)=>{
             expect(row).toEqual(undefined)
+            expect(originalLength-1).toEqual(sampleUsers.length)
         })
     })
 })

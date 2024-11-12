@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1728845472580" clover="3.2.0">
-  <project timestamp="1728845472580" name="All files">
-    <metrics statements="53" coveredstatements="25" conditionals="16" coveredconditionals="4" methods="20" coveredmethods="7" elements="89" coveredelements="36" complexity="0" loc="53" ncloc="53" packages="1" files="2" classes="2"/>
+<coverage generated="1729175810097" clover="3.2.0">
+  <project timestamp="1729175810097" name="All files">
+    <metrics statements="53" coveredstatements="20" conditionals="16" coveredconditionals="3" methods="20" coveredmethods="4" elements="89" coveredelements="27" complexity="0" loc="53" ncloc="53" packages="1" files="2" classes="2"/>
     <file name="database.js" path="/home/vicmwass/simple Api/database.js">
-      <metrics statements="52" coveredstatements="24" conditionals="16" coveredconditionals="4" methods="20" coveredmethods="7"/>
+      <metrics statements="52" coveredstatements="19" conditionals="16" coveredconditionals="3" methods="20" coveredmethods="4"/>
       <line num="1" count="1" type="stmt"/>
       <line num="2" count="1" type="stmt"/>
       <line num="6" count="1" type="stmt"/>
@@ -42,12 +42,12 @@
       <line num="69" count="0" type="stmt"/>
       <line num="71" count="0" type="stmt"/>
       <line num="78" count="1" type="stmt"/>
-      <line num="79" count="1" type="stmt"/>
-      <line num="80" count="1" type="stmt"/>
-      <line num="81" count="1" type="stmt"/>
-      <line num="82" count="1" type="cond" truecount="1" falsecount="1"/>
+      <line num="79" count="0" type="stmt"/>
+      <line num="80" count="0" type="stmt"/>
+      <line num="81" count="0" type="stmt"/>
+      <line num="82" count="0" type="cond" truecount="0" falsecount="2"/>
       <line num="83" count="0" type="stmt"/>
-      <line num="85" count="1" type="stmt"/>
+      <line num="85" count="0" type="stmt"/>
       <line num="92" count="1" type="stmt"/>
       <line num="93" count="0" type="stmt"/>
       <line num="94" count="0" type="stmt"/>
