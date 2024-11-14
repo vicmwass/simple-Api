@@ -14,7 +14,7 @@ new sqlite3.Database(dbName,(err)=>{
         defLogger.info("database Ok")
         db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",[],(err,row)=>{            
             if(row==undefined){
-                db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance INTEGER DEFAULT 0 );',[],(err)=>{
+                db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance NUMERIC DEFAULT 0 );',[],(err)=>{
                 if(err){
                     defLogger.info(err.message)
                 }else{

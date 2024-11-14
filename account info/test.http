@@ -1,0 +1,8 @@
+POST http://localhost:3001/create_account
+Content-Type: application/json
+# account_holder_id,account_holder_name,account_number
+{
+	"account_holder_id":"12",
+	"account_holder_name": "vicmwas",
+    "account_number":"1100993344"
+}

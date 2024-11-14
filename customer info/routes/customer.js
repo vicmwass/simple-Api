@@ -45,19 +45,19 @@ router.route("/:id").get((req,res)=>{
             })
         }else{
             if(firstname==undefined){
-                firstname=data.firstname
+                firstname=result.firstname
             }
             if(lastname==undefined){
-                lastname=data.lastname
+                lastname=result.lastname
             }
             if(username==undefined){
-                username=data.username
+                username=result.username
             }
             if(email==undefined){
-                email=data.email
+                email=result.email
             }
             if(account_balance==undefined){
-                account_balance=data.account_balance
+                account_balance=result.account_balance
             }
             updateCustomer(req.params.id,username,firstname,lastname,email,account_balance).then((row)=>{
                 data={
