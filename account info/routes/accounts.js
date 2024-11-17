@@ -61,9 +61,9 @@ router.route("/withdraw_amount").post(jsonParser,(req,res)=>{
                 message:"account does not exist"
             })
         }else if (amount >= result.account_balance) {
-            logger.error(`Account with account number ${credit_account_number} has insufficient amount to perform withdrawal`);
+            logger.error(`Account with account number ${account_number} has insufficient amount to perform withdrawal of amount ${amount}`);
             res.status(400).json({
-                message: `Account with account number ${credit_account_number} has insufficient amount to perform withdrawal`
+                message: `Account with account number ${account_number} has insufficient amount to perform withdrawal of amount ${amount}`
             })
         }else{            
             const new_balance=result.account_balance-amount

@@ -18,7 +18,7 @@ new sqlite3.Database(dbName,(err)=>{
                 if(err){
                     defLogger.info(err.message)
                 }else{
-                    defLogger.info("CUSTOMER table created")
+                    defLogger.info("ACCOUNT table created")
                 }
             })}
         })

@@ -14,7 +14,7 @@ new sqlite3.Database(dbName,(err)=>{
         defLogger.info("database Ok")
         db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",[],(err,row)=>{            
             if(row==undefined){
-                db.run('CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance NUMERIC DEFAULT 0 );',[],(err)=>{
+                db.run("CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance NUMERIC DEFAULT 0,account_number TEXT DEFAULT '');",[],(err)=>{
                 if(err){
                     defLogger.info(err.message)
                 }else{
@@ -26,7 +26,7 @@ new sqlite3.Database(dbName,(err)=>{
 
 
 const readAllCustomer=()=>{
-    const sql='SELECT id,firstname,lastname,username,email FROM CUSTOMER'
+    const sql='SELECT * FROM CUSTOMER'
     return new Promise((resolve, reject) => {
         db.all(sql,[],(err,rows)=>{
             if(err){
@@ -48,7 +48,7 @@ const testFunction=()=>{
     return "hello"
 }
 const readCustomer=(id)=>{
-    const sql='SELECT firstname,lastname,username FROM CUSTOMER WHERE  id= ?'
+    const sql='SELECT firstname,lastname,username,account_balance FROM CUSTOMER WHERE  id= ?'
     return new Promise((resolve, reject) => {
         db.get(sql,[id],(err,row)=>{
             if(err){
@@ -68,17 +68,24 @@ const createCustomer=(firstname,lastname,username,password,email)=>{
             if(err){
                 reject(err)
             }else{
-                resolve()
+                db.all(`SELECT id,username FROM CUSTOMER ORDER BY id DESC LIMIT 1`, [], (err, rows) => {
+                    if(err){
+                        reject(err)
+                    }else{
+                        resolve(rows[0])
+                    }
+                })
+                
             }
         })
     })
     
 }
 
-const updateCustomer=(id,username,firstname,lastname,email,account_balance)=>{
-    const sql="UPDATE CUSTOMER SET firstname=?,lastname=?,username=?,email=?,account_balance=? WHERE id= ?"
+const updateCustomer=(id,username,firstname,lastname,email,account_balance,account_number)=>{
+    const sql="UPDATE CUSTOMER SET firstname=?,lastname=?,username=?,email=?,account_balance=?,account_number=? WHERE id= ?"
     return new Promise((resolve, reject) => {
-        db.run(sql,[firstname,lastname,username,email,account_balance,id],(err,row)=>{
+        db.run(sql,[firstname,lastname,username,email,account_balance,account_number,id],(err,row)=>{
             if(err){
                 reject(err)
             }else{

@@ -1,5 +1,6 @@
 const  { Router } =require("express")
 const {defLogger } =require('../logger.js' )
+const {sendMessage}=require('../rabbitmqConn.js')
 const {readAllCustomer,createCustomer,readCustomer,updateCustomer,deleteCustomer} =require("../database.js")
 const bodyParser= require("body-parser")
 const router=Router()
@@ -59,6 +60,9 @@ router.route("/:id").get((req,res)=>{
             if(account_balance==undefined){
                 account_balance=result.account_balance
             }
+            if(account_number==undefined){
+                account_number=result.account_number
+            }
             updateCustomer(req.params.id,username,firstname,lastname,email,account_balance).then((row)=>{
                 data={
                     firstname,
@@ -114,13 +118,18 @@ router.route("/:id").get((req,res)=>{
 
 router.post("/",jsonParser,(req,res)=>{
     const {firstname,lastname,username,password,email}=req.body
-        createCustomer(firstname,lastname,username,password,email).then(()=>{
+        createCustomer(firstname,lastname,username,password,email).then((result)=>{
             let data={
+                id:result.id,
                 firstname,
                 lastname,
                 username,
                 email
             }
+            sendMessage(JSON.stringify({
+                customer_id:result.id,
+                customer_username:username,
+            }),'message-account.create-account')
             res.status(201).json({
                 message:"added successfully",
                 customer:data

@@ -1,0 +1,58 @@
+services:
+  traefik:
+    image: traefik:latest
+    container_name: simpleApi.proxy
+    restart: always
+    ports:
+      - "3000:80"
+      - "8888:8080" # The Web UI (enabled by --api)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # So that Traefik can listen to the Docker events
+      - ./traefik:/etc/traefik # So that Traefik can listen to the Docker events
+    networks:
+      - simple-api
+  customer.api:
+    build:
+      context: ./customer \info
+    container_name: customer.api
+    volumes:
+      - custapi_nm:/app/node_modules
+      - ./customer \info:/app
+    networks:
+      - simple-api
+    depends_on:
+      - rabbit
+    ports:
+      - "3002:3002"
+  account.api:
+    build:
+      context: ./account \info
+    volumes:
+      - accapi_nm:/app/node_modules
+      - ./account \info:/app
+    networks:
+      - simple-api
+    depends_on:
+      - rabbit
+    ports: 
+      - "3001:3001"
+  rabbitmq:
+    # image: rabbitmq:management-alpine
+    image: rabbitmq:3-management
+    hostname: "rabbitmq"
+    container_name: simple-api.rabbit
+    networks:
+      - simple-api
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_VHOST: / 
+volumes:
+  custapi_nm:
+  accapi_nm:
+networks:
+  simple-api:
+    external: true
