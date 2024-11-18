@@ -13,27 +13,28 @@ services:
       - simple-api
   customer.api:
     build:
-      context: ./customer \info
+      context: ./customer info
     container_name: customer.api
     volumes:
       - custapi_nm:/app/node_modules
-      - ./customer \info:/app
+      - ./customer info:/app
     networks:
       - simple-api
     depends_on:
-      - rabbit
+      - rabbitmq
     ports:
       - "3002:3002"
   account.api:
     build:
-      context: ./account \info
+      context: ./account info
+    container_name: account.api
     volumes:
       - accapi_nm:/app/node_modules
-      - ./account \info:/app
+      - ./account info:/app
     networks:
       - simple-api
     depends_on:
-      - rabbit
+      - rabbitmq
     ports: 
       - "3001:3001"
   rabbitmq:

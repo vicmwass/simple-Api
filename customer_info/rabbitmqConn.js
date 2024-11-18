@@ -68,7 +68,7 @@ function sendMessage(message, routingKey) {
 async function startMQConnection() {
   try {
     logger.info("Trying to connect to RabbitMQ....");
-    connection = await amqp.connect("amqp://user:password@localhost:5672");
+    connection = await amqp.connect("amqp://user:password@rabbitmq");
     // const connection = await amqp.connect("amqp://user:password@rabbitmq");
     channel = await connection.createChannel();
     await channel.assertExchange(exchange, "topic", { durable: true });
@@ -84,9 +84,9 @@ async function startMQConnection() {
     console.warn(error);
     logger.error(error.message);
     if (error.message.includes("connect ECONNREFUSED")) {
-      setTimeout(() => startUp(), 10000);
+      setTimeout(() => startMQConnection(), 10000);
     } else if (error.message.includes("Channel is not established.")) {
-      setTimeout(() => startUp(), 10000);
+      setTimeout(() => startMQConnection(), 10000);
     }
   }
 }
