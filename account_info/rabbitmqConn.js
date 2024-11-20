@@ -60,12 +60,14 @@ function sendMessage(message,routingKey){
 async function startMQConnection(){
     try{
         logger.info("Trying to connect to RabbitMQ....");
-        connection = await amqp.connect("amqp://user:password@rabbitmq");
+        connection = await amqp.connect("amqp://user:password@localhost:5672");
         // const connection = await amqp.connect("amqp://user:password@rabbitmq");
         channel = await connection.createChannel();  
         await channel.assertExchange(exchange, "topic", { durable: true });
         await channel.assertQueue('message-customer', {durable: true});
         await channel.bindQueue('message-customer', exchange, 'message-customer.#')
+        await channel.assertQueue('message-account', { durable: true });
+    await channel.bindQueue('message-account', exchange, 'message-account.#')
         logger.info("Connected to RabbitMQ.");
         
       

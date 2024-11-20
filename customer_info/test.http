@@ -7,20 +7,20 @@ POST http://localhost:3002/customers
 Content-Type: application/json
 
 {
-	"firstname":"mwas3",
+	"firstname":"mwas10",
 	"lastname": "vic",
-    "username":"mwas3vic",
-	"email":"mwas3vic@gmail.com",
+    "username":"mwas10vic",
+	"email":"mwas10vic@gmail.com",
 	"password":"Kami1234"
 }
 
 ###
-PUT http://localhost:3002/customers/3
+PUT http://localhost:3002/customers/5
 Content-Type: application/json
 
 {
 
-	"account_balance":"100"
+	"account_balance":"1"
 }
 
 ###

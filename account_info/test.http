@@ -21,8 +21,8 @@ POST http://localhost:3001/accounts/add_amount
 Content-Type: application/json
 
 {
-	"account_number":"1100993349",
-	"amount":12
+	"account_number":"1100977897",
+	"amount":1198
 }
 
 ###
@@ -30,8 +30,8 @@ POST http://localhost:3001/accounts/withdraw_amount
 Content-Type: application/json
 
 {
-	"account_number":"1100993349",
-	"amount":100
+	"account_number":"1100977897",
+	"amount":2388
 }
 
 ###
@@ -39,7 +39,7 @@ POST http://localhost:3001/accounts/money_transfer
 Content-Type: application/json
 
 {
-	"credit_account_number":"1100993349",
-	"debit_account_number":"1100993344",
-	"amount":12
+	"credit_account_number":"1100977897",
+	"debit_account_number":"1100963731",
+	"amount":120
 }

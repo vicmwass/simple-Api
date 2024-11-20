@@ -2,7 +2,7 @@ const  { Router } =require("express")
 const {defLogger } =require('../logger.js' )
 const {getAllAccounts,getAccountByAccountNumber,getAccountByHolderId,updateAccountBalance,createAccount,deleteAccount} =require("../database.js")
 const bodyParser= require("body-parser")
-const { data } = require("browserslist")
+const {sendMessage}=require('../rabbitmqConn.js')
 const router=Router()
 
 const logger=defLogger
@@ -71,8 +71,12 @@ router.route("/withdraw_amount").post(jsonParser,(req,res)=>{
                 let data={
                     account_number,previous_balance:result.account_balance,current_balance:new_balance
                 }
+                sendMessage(JSON.stringify({
+                    account_holder_id:result.account_holder_id,
+                    amount
+                }),'message-customer.withdraw-amount')
                 res.status(201).json({
-                    message:"added amount successfully",
+                    message:"withdrawn amount successfully",
                     account_details:data
                 })
             }).catch((err)=>{
@@ -106,6 +110,10 @@ router.route("/add_amount").post(jsonParser,(req,res)=>{
                 let data={
                     account_number,previous_balance:result.account_balance,current_balance:new_balance
                 }
+                sendMessage(JSON.stringify({
+                    account_holder_id:result.account_holder_id,
+                    amount
+                }),'message-customer.added-amount')
                 res.status(201).json({
                     message:"added amount successfully",
                     account_details:data
@@ -177,8 +185,8 @@ router.route("/").delete((req,res)=>{
 
 router.route("/money_transfer").post(jsonParser,async(req,res)=>{
     let {credit_account_number,debit_account_number,amount}=req.body
-    let credit_account_amount
-    let debit_account_amount
+    let credit_account_amount,credit_account_holder
+    let debit_account_amount,debit_account_holder
     try{
         //get credit account details
         let result = await getAccountByAccountNumber(credit_account_number)
@@ -196,7 +204,8 @@ router.route("/money_transfer").post(jsonParser,async(req,res)=>{
             })
             return
         }
-        credit_account_amount=result.account_balance        
+        credit_account_amount=result.account_balance     
+        credit_account_holder=result.account_holder_id
 
         //get debit account details
         result = await getAccountByAccountNumber(debit_account_number)
@@ -208,6 +217,7 @@ router.route("/money_transfer").post(jsonParser,async(req,res)=>{
             return
         }
         debit_account_amount=result.account_balance
+        debit_account_holder=result.account_holder_id
     }catch(err){
         logger.error("Failed transfer accounts check due to database issue");
         res.status(500).json({
@@ -240,6 +250,14 @@ router.route("/money_transfer").post(jsonParser,async(req,res)=>{
         })
         return
     }
+    sendMessage(JSON.stringify({
+        account_holder_id:credit_account_holder,
+        amount
+    }),'message-customer.withdraw-amount')
+    sendMessage(JSON.stringify({
+        account_holder_id:debit_account_holder,
+        amount
+    }),'message-customer.added-amount')
 
     res.status(200).json({
         message:"transfer successfully",

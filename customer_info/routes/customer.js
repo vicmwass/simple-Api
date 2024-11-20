@@ -37,7 +37,7 @@ router.route("/:id").get((req,res)=>{
     })       
   
 }).put(jsonParser,(req,res)=>{
-    let {firstname,lastname,username,email,account_balance}=req.body
+    let {firstname,lastname,username,email,account_balance,account_number}=req.body
     readCustomer(req.params.id).then((result)=>{
         if (result==undefined) {
             logger.error("customer does not exist");

@@ -48,7 +48,7 @@ const testFunction=()=>{
     return "hello"
 }
 const readCustomer=(id)=>{
-    const sql='SELECT firstname,lastname,username,account_balance FROM CUSTOMER WHERE  id= ?'
+    const sql='SELECT firstname,lastname,username,account_balance,account_number FROM CUSTOMER WHERE  id= ?'
     return new Promise((resolve, reject) => {
         db.get(sql,[id],(err,row)=>{
             if(err){

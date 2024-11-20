@@ -92,11 +92,9 @@ const updateAccountBalance=(amount,account_number)=>{
     const sql="UPDATE ACCOUNT SET account_balance=? WHERE account_number= ?"
     return new Promise((resolve, reject) => {
         db.run(sql,[amount,account_number],(err,row)=>{
-            console.log(this.changes)
             if(err){
                 reject(err)
             }else if(this.changes===0){
-                console.log(this.changes)
                 reject(new Error("No rows updated. Account ID may not exist."))
             }else{
                 resolve(row)

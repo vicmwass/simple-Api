@@ -13,11 +13,10 @@ services:
       - simple-api
   customer.api:
     build:
-      context: ./customer info
+      context: ./customer_info
     container_name: customer.api
     volumes:
       - custapi_nm:/app/node_modules
-      - ./customer info:/app
     networks:
       - simple-api
     depends_on:
@@ -26,11 +25,10 @@ services:
       - "3002:3002"
   account.api:
     build:
-      context: ./account info
+      context: ./account_info
     container_name: account.api
     volumes:
       - accapi_nm:/app/node_modules
-      - ./account info:/app
     networks:
       - simple-api
     depends_on:
