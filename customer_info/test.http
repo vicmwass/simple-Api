@@ -1,0 +1,27 @@
+GET http://localhost:3002/customers/
+
+###
+GET http://localhost:3002/customers/1
+###
+POST http://localhost:3002/customers
+Content-Type: application/json
+
+{
+	"firstname":"mwas10",
+	"lastname": "vic",
+    "username":"mwas10vic",
+	"email":"mwas10vic@gmail.com",
+	"password":"Kami1234"
+}
+
+###
+PUT http://localhost:3002/customers/5
+Content-Type: application/json
+
+{
+
+	"account_balance":"1"
+}
+
+###
+DELETE  http://localhost:3002/customers/2
