@@ -1,9 +1,10 @@
 const  { Router } =require("express")
 const {defLogger } =require('../logger.js' )
 const {sendMessage}=require('../rabbitmqConn.js')
-const {readAllCustomer,createCustomer,readCustomer,updateCustomer,deleteCustomer} =require("../database.js")
+const {readAllCustomer,createCustomer,readCustomer,updateCustomer,deleteCustomer,createUserTokenEntry} =require("../database.js")
 const bodyParser= require("body-parser")
 const router=Router()
+const {authenticateToken}=require("./auth.js")
 
 const logger=defLogger
 // create application/json parser
@@ -19,7 +20,10 @@ router.get('/',(req,res)=>{
 })
 
 
-router.route("/:id").get((req,res)=>{
+router.route("/:id").get(authenticateToken,(req,res)=>{
+    if(req.user.id!=req.params.id){
+        return res.sendStatus(401)
+    }
     readCustomer(req.params.id).then((result)=>{
         if (result==undefined) {
             logger.error("customer does not exist");
@@ -34,9 +38,11 @@ router.route("/:id").get((req,res)=>{
             res.status(500).json({
                 message:"database failure"
             })
-    })       
-  
-}).put(jsonParser,(req,res)=>{
+    }) 
+}).put(authenticateToken,(req,res)=>{
+    if(req.user.id!=req.params.id){
+        return res.sendStatus(401)
+    }
     let {firstname,lastname,username,email,account_balance,account_number}=req.body
     readCustomer(req.params.id).then((result)=>{
         if (result==undefined) {
@@ -89,7 +95,10 @@ router.route("/:id").get((req,res)=>{
             })
     }) 
     
-}).delete((req,res)=>{
+}).delete(authenticateToken,(req,res)=>{
+    if(req.user.id!=req.params.id){
+        return res.sendStatus(401)
+    }
     readCustomer(req.params.id).then((result)=>{
         if (result==undefined) {
             logger.error("customer does not exist");
@@ -130,15 +139,25 @@ router.post("/",jsonParser,(req,res)=>{
                 customer_id:result.id,
                 customer_username:username,
             }),'message-account.create-account')
+            createUserTokenEntry(username).then(()=>{}).catch((err)=>{
+                logger.error(err.message)
+            })
             res.status(201).json({
                 message:"added successfully",
                 customer:data
             })
         }).catch((err)=>{
             logger.error(err.message)
-            res.status(500).json({
-                message:"coundn't create customer"
-            })
+            
+            if(err.message.includes("constraint failed: CUSTOMER.username")){
+                res.status(500).json({
+                    message:"username already used"
+                })
+            }else{
+                res.status(500).json({
+                    message:"coundn't create customer"
+                })
+            }
         })                
 
 })

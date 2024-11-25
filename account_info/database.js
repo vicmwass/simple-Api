@@ -22,6 +22,16 @@ new sqlite3.Database(dbName,(err)=>{
                 }
             })}
         })
+        db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='AUTHTOKENS';",[],(err,row)=>{            
+            if(row==undefined){
+                db.run('CREATE TABLE AUTHTOKENS (account_holder_name INTEGER PRIMARY KEY AUTOINCREMENT,refresh_token TEXT );',[],(err)=>{
+                if(err){
+                    defLogger.info(err.message)
+                }else{
+                    defLogger.info("AUTHTOKENS table created")
+                }
+            })}
+        })
     }})
 
 

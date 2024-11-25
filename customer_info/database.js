@@ -14,11 +14,21 @@ new sqlite3.Database(dbName,(err)=>{
         defLogger.info("database Ok")
         db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='CUSTOMER';",[],(err,row)=>{            
             if(row==undefined){
-                db.run("CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT,password TEXT, email TEXT,account_balance NUMERIC DEFAULT 0,account_number TEXT DEFAULT '');",[],(err)=>{
+                db.run("CREATE TABLE CUSTOMER (id INTEGER PRIMARY KEY AUTOINCREMENT,firstname TEXT,lastname TEXT,username TEXT UNIQUE,password TEXT, email TEXT,account_balance NUMERIC DEFAULT 0,account_number TEXT DEFAULT '');",[],(err)=>{
                 if(err){
                     defLogger.info(err.message)
                 }else{
                     defLogger.info("CUSTOMER table created")
+                }
+            })}
+        })
+        db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='AUTHTOKENS';",[],(err,row)=>{            
+            if(row==undefined){
+                db.run("CREATE TABLE AUTHTOKENS (username TEXT UNIQUE PRIMARY KEY NOT NULL,refresh_token TEXT DEFAULT '');",[],(err)=>{
+                if(err){
+                    defLogger.info(err.message)
+                }else{
+                    defLogger.info("AUTHTOKENS table created")
                 }
             })}
         })
@@ -57,9 +67,22 @@ const readCustomer=(id)=>{
                 resolve(row)
             }
         })
-    })
-    
+    })    
 }
+
+const readCustomerByUsername=(username)=>{
+    const sql='SELECT password,id FROM CUSTOMER WHERE  username= ?'
+    return new Promise((resolve, reject) => {
+        db.get(sql,[username],(err,row)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(row)
+            }
+        })
+    })    
+}
+
 
 const createCustomer=(firstname,lastname,username,password,email)=>{
     const sql="INSERT INTO CUSTOMER (firstname,lastname,username,password,email) VALUES (?,?,?,?,?)"
@@ -92,8 +115,7 @@ const updateCustomer=(id,username,firstname,lastname,email,account_balance,accou
                 resolve(row)
             }
         })
-    })
-    
+    })    
 }
 
 const deleteCustomer=(id)=>{    
@@ -110,6 +132,72 @@ const deleteCustomer=(id)=>{
     
 }
 
+// const readAllToken=()=>{
+//     const sql='SELECT * FROM AUTHTOKENS'
+//     return new Promise((resolve, reject) => {
+//         db.all(sql,[],(err,rows)=>{
+//             if(err){
+//                 reject(err)
+//             }else{
+//                 resolve(rows)
+//             }
+//         })
+//     })
+    
+// }
+
+const readToken=(username)=>{
+    const sql='SELECT username,refresh_token FROM AUTHTOKENS WHERE  username= ?'
+    return new Promise((resolve, reject) => {
+        db.get(sql,[username],(err,row)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(row)
+            }
+        })
+    })    
+}
+const createUserTokenEntry=(username)=>{
+    const sql="INSERT INTO AUTHTOKENS (username) VALUES (?)"
+    return new Promise((resolve, reject) => {
+        db.run(sql,[username],(err)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve()
+                
+            }
+        })
+    })    
+}
+
+const updateToken=(username,refresh_token)=>{
+    const sql="UPDATE AUTHTOKENS SET refresh_token=? WHERE username= ?"
+    return new Promise((resolve, reject) => {
+        db.run(sql,[refresh_token,username],(err,row)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(row)
+            }
+        })
+    })    
+}
+
+const deleteToken=(username)=>{    
+    const sql="UPDATE AUTHTOKENS SET refresh_token=? WHERE username= ?"
+    return new Promise((resolve, reject) => {
+        db.run(sql,["",username],(err)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(row)
+            }
+        })
+    })
+    
+}
 
 module.exports={
     deleteCustomer,
@@ -117,5 +205,10 @@ module.exports={
     createCustomer,
     readAllCustomer,
     readCustomer,
+    readCustomerByUsername,
+    readToken,
+    createUserTokenEntry,
+    updateToken,
+    deleteToken,
     testFunction
 }
